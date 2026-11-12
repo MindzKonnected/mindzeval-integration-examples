@@ -1,6 +1,6 @@
-# MindzEval is not on PyPI yet, so it is installed from GitHub.
+# MindzEval is not on PyPI yet, so it is installed from GitHub (default branch).
 # Once it is published, replace the first line with:  mindzeval
-mindzeval @ git+https://github.com/MindzKonnected/mindzeval.git@development
+mindzeval @ git+https://github.com/MindzKonnected/mindzeval.git@main
 
 langgraph>=1.2,<2
 langchain-core>=1.0,<2
