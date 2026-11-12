@@ -1,0 +1,20 @@
+project: films-agent
+
+agent:
+  type: python
+  target: eval_adapter:answer       # module:function, relative to this file
+  concurrency: 4
+
+database:
+  url: sqlite:///films.db           # for Postgres use a read-only login: postgresql://reader:${DB_PASSWORD}@host/db
+
+datasets:
+  - cases/*.yaml
+
+output:
+  dir: mindzeval-results
+  formats: [csv, json, html]
+
+thresholds:                         # CI fails when one of these isn't met
+  uncapped_accuracy: 0.9            # was the query right, ignoring the 50-row display limit?
+  behavior_accuracy: 0.9            # right calls on answer / clarify / decline

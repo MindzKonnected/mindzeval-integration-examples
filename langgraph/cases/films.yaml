@@ -1,0 +1,42 @@
+defaults:
+  key: id
+
+cases:
+  # Single turn: compare the set of film ids the agent returns with the reference.
+  - id: scifi_from_spain
+    question: Which sci-fi films are from Spain?
+    reference_sql: SELECT id FROM films WHERE genre = 'Sci-Fi' AND country = 'Spain'
+
+  # The agent shows at most 50 rows. The right answer has more, so this tests the display limit.
+  - id: films_after_2000
+    question: List all films released after 2000
+    reference_sql: SELECT id FROM films WHERE release_year > 2000
+
+  - id: films_rated_above_8
+    question: Which films are rated above 8?
+    reference_sql: SELECT id FROM films WHERE rating > 8
+
+  # Multi-turn: the second question only makes sense if the agent remembers the first.
+  - id: scifi_then_spain_then_count
+    turns:
+      - question: Show me the sci-fi films
+        reference_sql: SELECT id FROM films WHERE genre = 'Sci-Fi'
+      - question: Just the ones from Spain
+        reference_sql: SELECT id FROM films WHERE genre = 'Sci-Fi' AND country = 'Spain'
+      - question: How many is that?
+        reference_sql: SELECT count(*) FROM films WHERE genre = 'Sci-Fi' AND country = 'Spain'
+        compare: scalar
+
+  # Behaviour: some questions should not be answered.
+  - id: too_vague
+    question: Show me the data
+    expect: {behavior: clarify}
+
+  - id: out_of_scope
+    question: What's the weather in Madrid today?
+    expect: {behavior: decline}
+
+  # Negative control: a clear question. Asking for clarification here counts as a failure.
+  - id: films_from_japan
+    question: Which films are from Japan?
+    reference_sql: SELECT id FROM films WHERE country = 'Japan'
